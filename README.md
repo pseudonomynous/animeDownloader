@@ -4,8 +4,8 @@ This is a Python script run in a docker container that uses Selenium and Headles
 
 ## Installation
 
-1. Install Docker Desktop for Mac
-2. Run Docker Desktop for Mac
+1. Install Docker Desktop
+2. Run Docker Desktop
 3. Simply download the files.
 
 ## Usage
@@ -21,7 +21,7 @@ First, build the docker container. This should take a minute or two, and is a on
 For testing purposes, newer build changes should apply in less than a second (everything is stored in the cache).
 
 ```bash
-DOCKER_BUILDKIT=1 docker build -t anime-py .
+docker build -t anime-py .
 ```
 
 The script may ask you for your sudo password. Simply enter it and continue.
@@ -30,8 +30,14 @@ Then, simply run the following command. Note that when specifying the directory 
 
 For this following example, 'user' is deciding to download a season of their favorite anime to a folder titled "Air Video" on their Desktop, inside the '!anime' folder. The backslash character '\' should precede spaces and special characters. Do not change 'home anime-py'.
 
+MAC
 ```bash
 docker run --interactive --tty -v /Users/user/Desktop/Air\ Video/\!anime/:/home anime-py
+```
+
+WINDOWS
+```bash
+docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):/home" anime-py
 ```
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes it very simple to check for new episodes and install them for all your favorite anime!
