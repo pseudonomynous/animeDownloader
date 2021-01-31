@@ -30,16 +30,17 @@ Then, run the following command. Note that when specifying the directory on your
 
 In this Mac example, 'user' is deciding to download a season of their favorite anime to a folder titled "!anime", which is inside their "Air Video" folder on their Desktop. The backslash character '\' should precede spaces and special characters. Do not change 'home anime-py'.
 
-MAC
+### MAC
 ```bash
 docker run --interactive --tty -v /Users/user/Desktop/Air\ Video/\!anime/:/home anime-py
 ```
-Alternatively for Windows:
 
-WINDOWS
+### WINDOWS
 ```bash
 docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):/home" anime-py
 ```
+
+### results
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes updating your anime list with the most recent episodes a breeze. This also means you can share this file and its contents with a friend, and run them through the same process. Then all they'll have to do is drag the "myAnime.txt" into the destination for their anime episodes, and select [1] for "Update your anime" when prompted by the script.
 
@@ -49,7 +50,9 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 Please make sure to update tests as appropriate.
 
 # extra testing stuff for later
+```
 brew install docker-machine-nfs
 docker-machine create yourdockermachine
 docker-machine start yourdockermachine # already starting?
 docker-machine-nfs yourdockermachine --shared-folder=/Users --nfs-config="-alldirs -maproot=0"
+```
