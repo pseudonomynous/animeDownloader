@@ -45,7 +45,7 @@ options.add_experimental_option('useAutomationExtension', False)
 
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-os.system('cls' if os.name == 'nt' else 'clear')	
+# os.system('cls' if os.name == 'nt' else 'clear')	
 print ("Headless Chrome Initialized")
 
 params = {'behavior': 'allow', 'downloadPath': r''}
@@ -118,7 +118,6 @@ def download(link, entire, first, last, title, season, loc, subOrDub):
 
 	if(entire == 'y'):
 		first = 1
-
 		driver.get(link);
 		elem = driver.find_element_by_xpath("//a[contains(text(), '0-')]")
 		tempString = str(elem.get_attribute('innerHTML')).split("-",1)[1]
@@ -126,9 +125,9 @@ def download(link, entire, first, last, title, season, loc, subOrDub):
 
 	#=======================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
+	print('Downloading Episodes ' + str(first) + '-' + str(last) + ' of ' + title)
 	for i in range(int(first), int(last) + 1):
-		os.system('cls' if os.name == 'nt' else 'clear')
-		print('Downloading Episodes ' + str(first) + '-' + str(last) + ' of ' + title)
+		# os.system('cls' if os.name == 'nt' else 'clear')
 		print("\n===============================================================\n")
 
 		if(i < 10):
@@ -170,32 +169,35 @@ def download(link, entire, first, last, title, season, loc, subOrDub):
 		print("\n===============================================================\n")
 #=======================================================================#
 
-shouldUpdate = input('Update and check your anime for new episodes (y/n): ')
+shouldQuit = False
+while(not shouldQuit):
+	shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nQuit [3]\nInput: ')
 
-if(shouldUpdate == 'n'):
-	link = input('Enter the gogoanime.so URL of the first episode: ')
-	entire = input('Download entire anime (y/n): ')
-	if(entire == 'n'):
-		first = input('Enter the first episode number you want to download: ')
-		last = input('Enter the last episode number you want to download: ')
-	title = input('Enter the title you want: ')
-	season = input('Enter the season of this anime: ')
-	loc = '/home'
-	subOrDub = input('Subbed or Dubbed (s/d): ')
-	download(link, entire, first, last, title, season, loc, subOrDub)
-
-if(shouldUpdate == 'y'):
-	with open(myAnimeDir) as file:
-		for myline in file:
-			array = myline.split(', ')
-			title = array[0]
-			link = array[1]
-			season = array[2]
-			subOrDub = array[3].rstrip()
-			entire = 'y'
-			loc = '/home'
-			download(link, entire, '-1', '-1', title, season, loc, subOrDub)
-			# os.system('cls' if os.name == 'nt' else 'clear')
+	if(shouldUpdate == '1'):
+		with open(myAnimeDir) as file:
+			for myline in file:
+				array = myline.split(', ')
+				title = array[0]
+				link = array[1]
+				season = array[2]
+				subOrDub = array[3].rstrip()
+				entire = 'y'
+				loc = '/home'
+				download(link, entire, '-1', '-1', title, season, loc, subOrDub)
+				# os.system('cls' if os.name == 'nt' else 'clear')
+	if(shouldUpdate == '2'):
+		link = input('Enter the gogoanime.so URL of the first episode: ')
+		entire = input('Download entire anime (y/n): ')
+		if(entire == 'n'):
+			first = input('Enter the first episode number you want to download: ')
+			last = input('Enter the last episode number you want to download: ')
+		title = input('Enter the title you want: ')
+		season = input('Enter the season of this anime: ')
+		loc = '/home'
+		subOrDub = input('Subbed or Dubbed (s/d): ')
+		download(link, entire, first, last, title, season, loc, subOrDub)
+	if(shouldUpdate == '3'):
+		shouldQuit = True
 
 driver.quit()
 print("Headless Chrome Instance Ended.")
