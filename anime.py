@@ -106,7 +106,6 @@ def download(link, title, season, loc, subOrDub):
 
 	driver.get(link)
 	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
-	print(epList)
 
 	linkArray = []
 	epNumArray = []
@@ -120,6 +119,7 @@ def download(link, title, season, loc, subOrDub):
 
 	linkArray = linkArray[::-1]
 	epNumArray = epNumArray[::-1]
+	print(len(epNumArray))
 
 	#=======================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
@@ -127,16 +127,16 @@ def download(link, title, season, loc, subOrDub):
 	for i in range(0, len(linkArray) - 1):
 		print("\n===============================================================\n")
 
-		if(i < 10):
+		if(len(epNumArray[i]) < 2):
 			if(int(season) < 10):
-				fileName = title + ' ' + 'S0' + season + 'E' + '0' + str(epNumArray[i]) + '.mp4'
+				fileName = title + ' ' + 'S0' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 			else:
-				fileName = title + ' ' + 'S' + season + 'E' + '0' + str(epNumArray[i]) + '.mp4'
+				fileName = title + ' ' + 'S' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 		else:
 			if(int(season) < 10):
-				fileName = title + ' ' + 'S0' + season + 'E' + str(epNumArray[i]) + '.mp4'
+				fileName = title + ' ' + 'S0' + season + 'E' + epNumArray[i] + '.mp4'
 			else:
-				fileName = title + ' ' + 'S' + season + 'E' + str(epNumArray[i]) + '.mp4'
+				fileName = title + ' ' + 'S' + season + 'E' + epNumArray[i] + '.mp4'
 
 		fileToOpen = loc / fileName
 
