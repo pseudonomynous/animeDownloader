@@ -171,24 +171,20 @@ def download(link, title, season, loc, subOrDub):
 # print('Number of arguments:', len(sys.argv), 'arguments.')
 # print('Argument List:', str(sys.argv))
 
+arg1 = ''
+shouldUpdate = ''
 if(len(sys.argv) > 1):
 	if(sys.argv[1] == 'update'):
-		with open(myAnimeDir) as file:
-			for myline in file:
-				array = myline.split(', ')
-				title = array[0]
-				link = array[1]
-				season = array[2]
-				subOrDub = array[3].rstrip()
-				loc = '/home'
-				download(link, title, season, loc, subOrDub)
-		shouldQuit = True
-else:
-	shouldQuit = False
+		arg1 = 'update'
+	if(sys.argv[1] == 'addAnime'):
+		arg1 = 'addAnime'
+shouldQuit = False
 while(not shouldQuit):
-	shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nQuit [3]\nInput: ')
-
-	if(shouldUpdate == '1'):
+	if(arg1 == ''):
+		shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nQuit [3]\nInput: ')
+	else:	
+		shouldQuit = True
+	if(shouldUpdate == '1' or arg1 == 'update'):
 		with open(myAnimeDir) as file:
 			for myline in file:
 				array = myline.split(', ')
@@ -198,7 +194,7 @@ while(not shouldQuit):
 				subOrDub = array[3].rstrip()
 				loc = '/home'
 				download(link, title, season, loc, subOrDub)
-	if(shouldUpdate == '2'):
+	if(shouldUpdate == '2' or arg1 == 'addAnime'):
 		link = input('Enter the gogoanime.so URL of the anime: ')
 		title = input('Enter the title you want: ')
 		season = input('Enter the season of this anime: ')
