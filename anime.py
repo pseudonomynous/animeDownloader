@@ -45,7 +45,6 @@ options.add_experimental_option('useAutomationExtension', False)
 
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-# os.system('cls' if os.name == 'nt' else 'clear')	
 print ("Headless Chrome Initialized")
 
 params = {'behavior': 'allow', 'downloadPath': r''}
