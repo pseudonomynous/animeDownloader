@@ -16,11 +16,13 @@ else:
     readline.parse_and_bind("tab: complete")
 
 from pathlib import Path
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+
 from webdriver_manager.chrome import ChromeDriverManager
 from pyvirtualdisplay import Display
 
@@ -44,13 +46,10 @@ options.add_experimental_option('useAutomationExtension', False)
 #====================================================================================================#
 
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
-# os.system('cls' if os.name == 'nt' else 'clear')	
 print ("Headless Chrome Initialized")
 
 params = {'behavior': 'allow', 'downloadPath': r''}
 driver.execute_cdp_cmd('Page.setDownloadBehavior', params)
-
 download_dir = '/Downloads'
 
 #====================================================================================================#
@@ -72,85 +71,83 @@ def isFileDownloaded():
     if os.path.isfile(file_path):
         print("File Downloaded successfully..")
 
-#=======================================================================#
+#====================================================================================================#
 
 myAnimeDir = "/home/myAnime.txt"
 myAnime = open(myAnimeDir, "a+")
 print(myAnime.read())
 
-#=======================================================================#
+#====================================================================================================#
 
-def download(link, entire, first, last, title, season, loc, subOrDub):
-	# print('Link: ' + link)
-	# print('Entire: ' + entire)
-	# print('First: ' + first)
-	# print('Last: ' + last)
-	# print('Title: ' + title)
-	# print('Season: ' + season)
-	# print('loc: ' + loc)
-	# print('Sub or Dub: ' + subOrDub)
-	#=======================================================================#
+def download(link, title, season, loc, subOrDub):
+
+	#================================================================================================#
 
 	with open(myAnimeDir) as f:
 		if link not in f.read():
 			myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
 		print(myAnime.read())
 
-	#=======================================================================#
+	#================================================================================================#
 
 	if(subOrDub == 's'):
 		title += ' (Sub)'
-		# print("ADDING SUB TO TITLE")
 	if(subOrDub == 'd'):
 		title += ' (Dub)'
-		# print("ADDING DUB TO TITLE")
 
-	#=======================================================================#
+	#================================================================================================#
 
 	loc = loc + "/" + title
 	loc = Path(loc)
 	if not os.path.exists(loc):
 		os.mkdir(loc)
 
-	numlessLink = link[:-1]
+	#================================================================================================#
 
-	#=======================================================================#
+	driver.get(link)
+	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
 
-	if(entire == 'y'):
-		first = 1
-		driver.get(link);
-		elem = driver.find_element_by_xpath("//a[contains(text(), '0-')]")
-		tempString = str(elem.get_attribute('innerHTML')).split("-",1)[1]
-		last = int(tempString)
+	linkArray = []
+	epNumArray = []
 
-	#=======================================================================#
+	eps = epList.find_elements_by_tag_name('li')
+	for ep in eps:
+		temp = ep.find_element_by_tag_name('a')
+		linkArray.append(temp.get_attribute('href'))
+		temp2 = temp.find_element_by_tag_name('div')
+		epNumArray.append(temp2.text.split("EP ",1)[1])
+
+	linkArray = linkArray[::-1]
+	epNumArray = epNumArray[::-1]
+
+	#================================================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
-	print('Downloading Episodes ' + str(first) + '-' + str(last) + ' of ' + title)
-	for i in range(int(first), int(last) + 1):
-		# os.system('cls' if os.name == 'nt' else 'clear')
+
+	print('Downloading Episodes ' + str(epNumArray[0]) + '-' + str(epNumArray[len(epNumArray) - 1]) + ' of ' + title)
+	for i in range(0, len(linkArray)):
 		print("\n===============================================================\n")
 
-		if(i < 10):
-			if(int(season) < 10):
-				fileName = title + ' ' + 'S0' + season + 'E' + '0' + str(i) + '.mp4'
+		if(int(float(epNumArray[i])) < 10):
+			if(int(float(season)) < 10):
+				fileName = title + ' ' + 'S0' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 			else:
-				fileName = title + ' ' + 'S' + season + 'E' + '0' + str(i) + '.mp4'
+				fileName = title + ' ' + 'S' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 		else:
-			if(int(season) < 10):
-				fileName = title + ' ' + 'S0' + season + 'E' + str(i) + '.mp4'
+			if(int(float(season)) < 10):
+				fileName = title + ' ' + 'S0' + season + 'E' + epNumArray[i] + '.mp4'
 			else:
-				fileName = title + ' ' + 'S' + season + 'E' + str(i) + '.mp4'
+				fileName = title + ' ' + 'S' + season + 'E' + epNumArray[i] + '.mp4'
 
 		fileToOpen = loc / fileName
 
 		if(not os.path.exists(fileToOpen)):		# Checks to see if the file is already downloaded.
-			link = numlessLink + str(i)
+			link = linkArray[i]
 			driver.get(link);
 
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
 				if(elem.get_attribute("href").find('gogo-play') != -1):
-					print('Found Season ' + season + " Episode " + str(i) + " of " + title + " on gogoanime.so")
+					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.so")
 					link = elem.get_attribute("href")
 
 			driver.get(link)
@@ -158,7 +155,7 @@ def download(link, entire, first, last, title, season, loc, subOrDub):
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
 				if(elem.get_attribute("href").find('gogo-play') == -1):
-					print('Found download link for Season ' + season + " Episode " + str(i) + " of " + title)
+					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
 					link = elem.get_attribute("href")
 					file = elem
 					break	# default to picking first one
@@ -167,7 +164,8 @@ def download(link, entire, first, last, title, season, loc, subOrDub):
 		else:
 			print(fileName + ' was already downloaded.')
 		print("\n===============================================================\n")
-#=======================================================================#
+
+#====================================================================================================#
 
 shouldQuit = False
 while(not shouldQuit):
@@ -181,21 +179,15 @@ while(not shouldQuit):
 				link = array[1]
 				season = array[2]
 				subOrDub = array[3].rstrip()
-				entire = 'y'
 				loc = '/home'
-				download(link, entire, '-1', '-1', title, season, loc, subOrDub)
-				# os.system('cls' if os.name == 'nt' else 'clear')
+				download(link, title, season, loc, subOrDub)
 	if(shouldUpdate == '2'):
-		link = input('Enter the gogoanime.so URL of the first episode: ')
-		entire = input('Download entire anime (y/n): ')
-		if(entire == 'n'):
-			first = input('Enter the first episode number you want to download: ')
-			last = input('Enter the last episode number you want to download: ')
+		link = input('Enter the gogoanime.so URL of the anime: ')
 		title = input('Enter the title you want: ')
 		season = input('Enter the season of this anime: ')
 		loc = '/home'
 		subOrDub = input('Subbed or Dubbed (s/d): ')
-		download(link, entire, first, last, title, season, loc, subOrDub)
+		download(link, title, season, loc, subOrDub)
 	if(shouldUpdate == '3'):
 		shouldQuit = True
 
