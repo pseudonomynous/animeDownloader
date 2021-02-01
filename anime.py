@@ -28,7 +28,7 @@ from pyvirtualdisplay import Display
 
 #====================================================================================================#
 
-display = Display(visible=0, size=(800, 800))  
+display = Display(visible=0, size=(800, 800))
 display.start()
 
 options = Options()
@@ -122,10 +122,9 @@ def download(link, title, season, loc, subOrDub):
 
 	#================================================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
-
+	print("\n================================================================================\n")
 	print('Downloading Episodes ' + str(epNumArray[0]) + '-' + str(epNumArray[len(epNumArray) - 1]) + ' of ' + title)
 	for i in range(0, len(linkArray)):
-		print("\n===============================================================\n")
 
 		if(int(float(epNumArray[i])) < 10):
 			if(int(float(season)) < 10):
@@ -163,7 +162,6 @@ def download(link, title, season, loc, subOrDub):
 			urllib.request.urlretrieve(link, fileToOpen)
 		else:
 			print(fileName + ' was already downloaded.')
-		print("\n===============================================================\n")
 
 #====================================================================================================#
 
