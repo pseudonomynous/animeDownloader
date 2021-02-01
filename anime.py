@@ -119,12 +119,11 @@ def download(link, title, season, loc, subOrDub):
 
 	linkArray = linkArray[::-1]
 	epNumArray = epNumArray[::-1]
-	print(len(epNumArray))
 
 	#=======================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
 	print('Downloading Episodes ' + str(epNumArray[0]) + '-' + str(epNumArray[len(epNumArray) - 1]) + ' of ' + title)
-	for i in range(0, len(linkArray) - 1):
+	for i in range(0, len(linkArray)):
 		print("\n===============================================================\n")
 
 		if(len(epNumArray[i]) < 2):
