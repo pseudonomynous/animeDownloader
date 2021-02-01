@@ -126,13 +126,13 @@ def download(link, title, season, loc, subOrDub):
 	for i in range(0, len(linkArray)):
 		print("\n===============================================================\n")
 
-		if(len(epNumArray[i]) < 2):
-			if(len(season) < 2):
+		if(int(float(epNumArray[i])) < 10):
+			if(int(float(season)) < 10):
 				fileName = title + ' ' + 'S0' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 			else:
 				fileName = title + ' ' + 'S' + season + 'E' + '0' + epNumArray[i] + '.mp4'
 		else:
-			if(len(season) < 2):
+			if(int(float(season)) < 10):
 				fileName = title + ' ' + 'S0' + season + 'E' + epNumArray[i] + '.mp4'
 			else:
 				fileName = title + ' ' + 'S' + season + 'E' + epNumArray[i] + '.mp4'
