@@ -26,6 +26,8 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from pyvirtualdisplay import Display
 
+import sys
+
 #====================================================================================================#
 
 display = Display(visible=0, size=(800, 800))
@@ -165,7 +167,24 @@ def download(link, title, season, loc, subOrDub):
 
 #====================================================================================================#
 
-shouldQuit = False
+
+# print('Number of arguments:', len(sys.argv), 'arguments.')
+# print('Argument List:', str(sys.argv))
+
+if(len(sys.argv) > 1):
+	if(sys.argv[1] == 'update'):
+		with open(myAnimeDir) as file:
+			for myline in file:
+				array = myline.split(', ')
+				title = array[0]
+				link = array[1]
+				season = array[2]
+				subOrDub = array[3].rstrip()
+				loc = '/home'
+				download(link, title, season, loc, subOrDub)
+		shouldQuit = True
+else:
+	shouldQuit = False
 while(not shouldQuit):
 	shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nQuit [3]\nInput: ')
 

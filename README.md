@@ -40,6 +40,8 @@ docker run --interactive --tty -v /Users/user/Desktop/Air\ Video/\!anime/:/home 
 docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):/home" anime-py
 ```
 
+NOTE: Simply add "update" to the end of either of those commands to update all your anime without going through the menu first.
+
 ### results
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes updating your anime list with the most recent episodes a breeze. This also means you can share this file and its contents with a friend, and run them through the same process. Then all they'll have to do is drag the "myAnime.txt" into the destination for their anime episodes, and select [1] for "Update your anime" when prompted by the script.

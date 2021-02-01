@@ -19,4 +19,4 @@ RUN pip install -r requirements.txt
 
 ADD anime.py .
 
-CMD ["python3", "./anime.py" ]
+ENTRYPOINT ["python3", "./anime.py" ]
