@@ -16,11 +16,13 @@ else:
     readline.parse_and_bind("tab: complete")
 
 from pathlib import Path
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+
 from webdriver_manager.chrome import ChromeDriverManager
 from pyvirtualdisplay import Display
 
@@ -44,12 +46,10 @@ options.add_experimental_option('useAutomationExtension', False)
 #====================================================================================================#
 
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
 print ("Headless Chrome Initialized")
 
 params = {'behavior': 'allow', 'downloadPath': r''}
 driver.execute_cdp_cmd('Page.setDownloadBehavior', params)
-
 download_dir = '/Downloads'
 
 #====================================================================================================#
@@ -71,37 +71,38 @@ def isFileDownloaded():
     if os.path.isfile(file_path):
         print("File Downloaded successfully..")
 
-#=======================================================================#
+#====================================================================================================#
 
 myAnimeDir = "/home/myAnime.txt"
 myAnime = open(myAnimeDir, "a+")
 print(myAnime.read())
 
-#=======================================================================#
+#====================================================================================================#
 
 def download(link, title, season, loc, subOrDub):
-	#=======================================================================#
+
+	#================================================================================================#
 
 	with open(myAnimeDir) as f:
 		if link not in f.read():
 			myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
 		print(myAnime.read())
 
-	#=======================================================================#
+	#================================================================================================#
 
 	if(subOrDub == 's'):
 		title += ' (Sub)'
 	if(subOrDub == 'd'):
 		title += ' (Dub)'
 
-	#=======================================================================#
+	#================================================================================================#
 
 	loc = loc + "/" + title
 	loc = Path(loc)
 	if not os.path.exists(loc):
 		os.mkdir(loc)
 
-	#=======================================================================#
+	#================================================================================================#
 
 	driver.get(link)
 	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
@@ -119,8 +120,9 @@ def download(link, title, season, loc, subOrDub):
 	linkArray = linkArray[::-1]
 	epNumArray = epNumArray[::-1]
 
-	#=======================================================================#
+	#================================================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
+
 	print('Downloading Episodes ' + str(epNumArray[0]) + '-' + str(epNumArray[len(epNumArray) - 1]) + ' of ' + title)
 	for i in range(0, len(linkArray)):
 		print("\n===============================================================\n")
@@ -153,7 +155,7 @@ def download(link, title, season, loc, subOrDub):
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
 				if(elem.get_attribute("href").find('gogo-play') == -1):
-					print('Found download link for Season ' + season + " Episode " + str(i) + " of " + title)
+					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
 					link = elem.get_attribute("href")
 					file = elem
 					break	# default to picking first one
@@ -162,7 +164,8 @@ def download(link, title, season, loc, subOrDub):
 		else:
 			print(fileName + ' was already downloaded.')
 		print("\n===============================================================\n")
-#=======================================================================#
+
+#====================================================================================================#
 
 shouldQuit = False
 while(not shouldQuit):
