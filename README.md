@@ -48,7 +48,7 @@ A file titled `myAnime.txt` will be generated in the same folder you decide to s
 
 ## Advanced Usage
 
-### Adding Anime (3 OPTIONS)
+## Adding Anime (3 OPTIONS)
 
 #### Option 1
 You can also add an anime by using the `addAnime` tag after your initial command
@@ -93,7 +93,7 @@ Kill La Kill, https://gogoanime.so/category/kill-la-kill, 1, s
 
 NOTE: Make sure to have a newline character onto the next line.
 
-### Updating Anime (2 OPTIONS)
+## UPDATING ANIME (2 OPTIONS)
 
 #### Option 1
 Run the script normally without the `update` or `addAnime` tags. Select `Update your anime [1]`.
