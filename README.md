@@ -46,13 +46,23 @@ NOTE: Simply add "update" to the end of either of those commands to update all y
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes updating your anime list with the most recent episodes a breeze. This also means you can share this file and its contents with a friend, and run them through the same process. Then all they'll have to do is drag the "myAnime.txt" into the destination for their anime episodes, and select [1] for "Update your anime" when prompted by the script.
 
-### Adding Anime
+### Adding Anime (3 OPTIONS)
 
-There are currently 3 ways to add an anime to your myAnime.txt file. 
+Option 1: You can also add an anime by using the 'addAnime' tag after your initial command
 
-Option 1: Run the script normally without the 'update' or 'addAnime' tags. Select 'Add a new anime [2]'. Enter in the link for the gogoanime page of the anime, and continue to give the console information such as desired name of anime, season, subs or dubs, etc.
+### MAC
+```bash
+docker run --interactive --tty -v /Users/user/Desktop/Air\ Video/\!anime/:/home anime-py addAnime
+```
 
-Option 2: Run the script normally without the 'update' or 'addAnime' tags. Select 'Search for anime [3]'. Type in the name of the anime (it can be partially incomplete). For this example, lets search for the anime 'kill la kill'. 
+### WINDOWS
+```bash
+docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):/home" anime-py addAnime
+```
+
+Option 2: Run the script normally without the 'update' or 'addAnime' tags. Select 'Add a new anime [2]'. Enter in the link for the gogoanime page of the anime, and continue to give the console information such as desired name of anime, season, subs or dubs, etc.
+
+Option 3: Run the script normally without the 'update' or 'addAnime' tags. Select 'Search for anime [3]'. Type in the name of the anime (it can be partially incomplete). For this example, lets search for the anime 'kill la kill'. 
 
 The results should be this:
 
@@ -64,9 +74,13 @@ The results should be this:
 
 Select one of the options, and continue. This bypasses the need for finding the anime page yourself!
 
-Option 3: Add the anime MANUALLY to your myAnime.txt file. The format is as follows: 
+Option 4: Add the anime MANUALLY to your myAnime.txt file. The format is as follows: 
 
 title, url, season, sub or dubs (s or d)
+
+Example: Kill La Kill, https://gogoanime.so/category/kill-la-kill, 1, s
+
+NOTE: Make sure to have a newline character onto the next line.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
