@@ -124,7 +124,7 @@ def download(link, title, season, loc, subOrDub):
 
 	#================================================================================================#
 	# ADD FUNCTIONALITY FOR EPISODES THAT ARE WEIRD FORMATS LIKE 24.5 OR 24.9
-	print("\n================================================================================\n")
+	print("================================================================================\n")
 	print('Downloading Episodes ' + str(epNumArray[0]) + '-' + str(epNumArray[len(epNumArray) - 1]) + ' of ' + title)
 	for i in range(0, len(linkArray)):
 
@@ -184,19 +184,21 @@ while(not shouldQuit):
 		with open(myAnimeDir) as file:
 			for myline in file:
 				if(len(myline) == 1):
-					print('Empty Line')
+					print('', end = '')
+					# print('Empty Line')
 				elif(myline.lstrip()[0] == '#'):		# Entire line is a comment, possibly some leading whitespace
-					print('Comment: ' + myline.lstrip())
+					print('', end = '')
+					# print('Comment: ' + myline.lstrip())
 				else:
-					array = myline.split(', ', 3)	# Splits into 4 parts just in case comment contains, uh, a few, uh, commas
-					title = array[0]
-					link = array[1]
-					season = array[2]
+					array = myline.split(',', 3)	# Splits into 4 parts just in case comment contains, uh, a few, uh, commas
+					title = array[0].lstrip()
+					link = array[1].lstrip()
+					season = array[2].lstrip()
 					if('#' in array[3]):		# second part of the line is a comment, after the anime info, possibly with leading whitespace.
-						subOrDub = array[3].split('#', 1)[0].rstrip()
-						print('Comment: #' + array[3].split('#', 1)[1])
+						subOrDub = array[3].split('#', 1)[0].rstrip().lstrip()
+						# print('Comment: #' + array[3].split('#', 1)[1])
 					else:
-						subOrDub = array[3].rstrip()
+						subOrDub = array[3].lstrip().rstrip()
 					loc = '/home'
 					download(link, title, season, loc, subOrDub)
 	if(shouldUpdate == '2' or arg1 == 'addAnime'):
