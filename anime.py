@@ -81,14 +81,55 @@ print(myAnime.read())
 
 #====================================================================================================#
 
+def existsInList(link):
+	with open(myAnimeDir) as f:
+		if link in f.read():
+			return True
+		else:
+			return False
+
+#====================================================================================================#
+
+def addToList(link, title, season, loc, subOrDub):	
+	if not existsInList(link):
+		myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
+		print(myAnime.read())
+
+#====================================================================================================#
+
+def updateAnime():
+	with open(myAnimeDir) as file:
+		for myline in file:
+			if(len(myline) == 1):
+				print('', end = '')
+				# print('Empty Line')
+			elif(myline.lstrip()[0] == '#'):		# Entire line is a comment, possibly some leading whitespace
+				print('', end = '')
+				# print('Comment: ' + myline.lstrip())
+			else:
+				array = myline.split(',', 3)	# Splits into 4 parts just in case comment contains, uh, a few, uh, commas
+				title = array[0].lstrip()
+				link = array[1].lstrip()
+				season = array[2].lstrip()
+				if('#' in array[3]):		# second part of the line is a comment, after the anime info, possibly with leading whitespace.
+					subOrDub = array[3].split('#', 1)[0].rstrip().lstrip()
+					# print('Comment: #' + array[3].split('#', 1)[1])
+				else:
+					subOrDub = array[3].lstrip().rstrip()
+				loc = '/home'
+				download(link, title, season, loc, subOrDub)
+
+#====================================================================================================#
+
 def download(link, title, season, loc, subOrDub):
 
 	#================================================================================================#
 
-	with open(myAnimeDir) as f:
-		if link not in f.read():
-			myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
-		print(myAnime.read())
+	addToList(link, title, season, loc, subOrDub)
+	# with open(myAnimeDir) as f:
+	# 	if link not in f.read():
+	# 		myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
+	# 	print(myAnime.read())
 
 	#================================================================================================#
 
@@ -177,38 +218,55 @@ if(len(sys.argv) > 1):
 shouldQuit = False
 while(not shouldQuit):
 	if(arg1 == ''):
-		shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nQuit [3]\nInput: ')
+		shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nSearch for anime [3]\nQuit [4]\nInput: ')
 	else:	
 		shouldQuit = True
 	if(shouldUpdate == '1' or arg1 == 'update'):
-		with open(myAnimeDir) as file:
-			for myline in file:
-				if(len(myline) == 1):
-					print('', end = '')
-					# print('Empty Line')
-				elif(myline.lstrip()[0] == '#'):		# Entire line is a comment, possibly some leading whitespace
-					print('', end = '')
-					# print('Comment: ' + myline.lstrip())
-				else:
-					array = myline.split(',', 3)	# Splits into 4 parts just in case comment contains, uh, a few, uh, commas
-					title = array[0].lstrip()
-					link = array[1].lstrip()
-					season = array[2].lstrip()
-					if('#' in array[3]):		# second part of the line is a comment, after the anime info, possibly with leading whitespace.
-						subOrDub = array[3].split('#', 1)[0].rstrip().lstrip()
-						# print('Comment: #' + array[3].split('#', 1)[1])
-					else:
-						subOrDub = array[3].lstrip().rstrip()
-					loc = '/home'
-					download(link, title, season, loc, subOrDub)
+		updateAnime()
 	if(shouldUpdate == '2' or arg1 == 'addAnime'):
 		link = input('Enter the gogoanime.so URL of the anime: ')
-		title = input('Enter the title you want: ')
-		season = input('Enter the season of this anime: ')
-		loc = '/home'
-		subOrDub = input('Subbed or Dubbed (s/d): ')
-		download(link, title, season, loc, subOrDub)
+		if(not existsInList(link)):
+			title = input('Enter the title you want: ')
+			season = input('Enter the season of this anime: ')
+			loc = '/home'
+			subOrDub = input('Subbed or Dubbed (s/d): ')
+			download(link, title, season, loc, subOrDub)
+		else:
+			print('Anime already exists on your list.')
 	if(shouldUpdate == '3'):
+		search = input('Enter the title of the anime you want to search for on gogoanime: ')
+		words = search.split(' ')
+		searchLink = 'https://gogoanime.so//search.html?keyword='
+		for i in range(0, len(words)):
+			searchLink = searchLink + words[i] + '%20'
+		# print(searchLink)
+		driver.get(searchLink)
+		pageList = driver.find_element_by_class_name("items")
+
+		linkArray = []
+
+		pages = pageList.find_elements_by_tag_name('li')
+		for page in pages:
+			temp = page.find_element_by_tag_name('a')
+			linkArray.append(temp.get_attribute('href'))
+		for i in range(0, len(linkArray)):
+			print(str(i + 1) + ': ' + linkArray[i])
+
+		selection = input('Your download choice (enter 0 to cancel): ')
+		if(selection == '0'):
+			print('canceled')
+		else:
+			link = linkArray[int(selection) - 1]
+			if(not existsInList(link)):
+				title = input('Enter the title you want: ')
+				season = input('Enter the season of this anime: ')
+				loc = '/home'
+				subOrDub = input('Subbed or Dubbed (s/d): ')
+				addToList(link, title, season, loc, subOrDub)
+				updateAnime()
+			else:
+				print('Anime already exists on your list.')
+	if(shouldUpdate == '4'):
 		shouldQuit = True
 
 driver.quit()

@@ -46,6 +46,28 @@ NOTE: Simply add "update" to the end of either of those commands to update all y
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes updating your anime list with the most recent episodes a breeze. This also means you can share this file and its contents with a friend, and run them through the same process. Then all they'll have to do is drag the "myAnime.txt" into the destination for their anime episodes, and select [1] for "Update your anime" when prompted by the script.
 
+### Adding Anime
+
+There are currently 3 ways to add an anime to your myAnime.txt file. 
+
+Option 1: Run the script normally without the 'update' or 'addAnime' tags. Select 'Add a new anime [2]'. Enter in the link for the gogoanime page of the anime, and continue to give the console information such as desired name of anime, season, subs or dubs, etc.
+
+Option 2: Run the script normally without the 'update' or 'addAnime' tags. Select 'Search for anime [3]'. Type in the name of the anime (it can be partially incomplete). For this example, lets search for the anime 'kill la kill'. 
+
+The results should be this:
+
+```
+1: https://gogoanime.so/category/kill-la-kill
+2: https://gogoanime.so/category/kill-la-kill-dub
+3: https://gogoanime.so/category/kill-la-kill-special
+```
+
+Select one of the options, and continue. This bypasses the need for finding the anime page yourself!
+
+Option 3: Add the anime MANUALLY to your myAnime.txt file. The format is as follows: 
+
+title, url, season, sub or dubs (s or d)
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
