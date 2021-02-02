@@ -44,7 +44,7 @@ docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):
 
 A file titled "myAnime.txt" will be generated in the same folder you decide to store your anime, and will save all your previous downloads. This makes updating your anime list with the most recent episodes a breeze. This also means you can share this file and its contents with a friend, and run them through the same process. Then all they'll have to do is drag the "myAnime.txt" into the destination for their anime episodes, and select [1] for "Update your anime" when prompted by the script.
 
-### Adding Anime (3 OPTIONS)
+## Adding Anime (3 OPTIONS)
 
 Option 1: You can also add an anime by using the 'addAnime' tag after your initial command
 
@@ -85,7 +85,7 @@ Kill La Kill, https://gogoanime.so/category/kill-la-kill, 1, s
 
 NOTE: Make sure to have a newline character onto the next line.
 
-### UPDATING ANIME (2 OPTIONS)
+## UPDATING ANIME (2 OPTIONS)
 
 Option 1: Run the script normally without the 'update' or 'addAnime' tags. Select 'Update your anime [1]'.
 
