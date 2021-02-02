@@ -28,7 +28,7 @@ The script may ask you for your sudo password. Enter it and continue.
 
 Then, run the following command. Note that when specifying the directory on your host computer, use escape characters if you're on a Mac or it will give you an error.
 
-In this Mac example, 'user' is deciding to download a season of their favorite anime to a folder titled "!anime", which is inside their "Air Video" folder on their Desktop. The backslash character '\' should precede spaces and special characters. Do not change 'home anime-py'.
+In this Mac example, 'user' is deciding to download a season of their favorite anime to a folder titled "!anime", which is inside their "Air Video" folder on their Desktop. The backslash character '\' should precede spaces and special characters. Do not change 'home anime-py'. Make sure that the filepath you put is the one you have personally, user should be your username, and change the folder location to one that exists already. If you want it like mine, create an Air Video folder on your desktop that has a folder called !anime inside it.
 
 ### MAC
 ```bash
@@ -41,6 +41,16 @@ docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):
 ```
 
 NOTE: Simply add "update" to the end of either of those commands to update all your anime without going through the menu first.
+
+### MAC
+```bash
+docker run --interactive --tty -v /Users/user/Desktop/Air\ Video/\!anime/:/home anime-py update
+```
+
+### WINDOWS
+```bash
+docker run --interactive --tty -v "$("C:/Users/user/Desktop/Air Video/!anime/"):/home" anime-py update
+```
 
 ### results
 
