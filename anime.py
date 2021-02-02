@@ -117,7 +117,7 @@ def download(link, title, season, loc, subOrDub):
 		temp = ep.find_element_by_tag_name('a')
 		linkArray.append(temp.get_attribute('href'))
 		temp2 = temp.find_element_by_tag_name('div')
-		epNumArray.append(temp2.text.split("EP ",1)[1])
+		epNumArray.append(temp2.text.split("EP ", 1)[1])
 
 	linkArray = linkArray[::-1]
 	epNumArray = epNumArray[::-1]
@@ -167,10 +167,6 @@ def download(link, title, season, loc, subOrDub):
 
 #====================================================================================================#
 
-
-# print('Number of arguments:', len(sys.argv), 'arguments.')
-# print('Argument List:', str(sys.argv))
-
 arg1 = ''
 shouldUpdate = ''
 if(len(sys.argv) > 1):
@@ -187,13 +183,22 @@ while(not shouldQuit):
 	if(shouldUpdate == '1' or arg1 == 'update'):
 		with open(myAnimeDir) as file:
 			for myline in file:
-				array = myline.split(', ')
-				title = array[0]
-				link = array[1]
-				season = array[2]
-				subOrDub = array[3].rstrip()
-				loc = '/home'
-				download(link, title, season, loc, subOrDub)
+				if(len(myline) == 1):
+					print('Empty Line')
+				elif(myline.lstrip()[0] == '#'):		# Entire line is a comment, possibly some leading whitespace
+					print('Comment: ' + myline.lstrip())
+				else:
+					array = myline.split(', ', 3)	# Splits into 4 parts just in case comment contains, uh, a few, uh, commas
+					title = array[0]
+					link = array[1]
+					season = array[2]
+					if('#' in array[3]):		# second part of the line is a comment, after the anime info, possibly with leading whitespace.
+						subOrDub = array[3].split('#', 1)[0].rstrip()
+						print('Comment: #' + array[3].split('#', 1)[1])
+					else:
+						subOrDub = array[3].rstrip()
+					loc = '/home'
+					download(link, title, season, loc, subOrDub)
 	if(shouldUpdate == '2' or arg1 == 'addAnime'):
 		link = input('Enter the gogoanime.so URL of the anime: ')
 		title = input('Enter the title you want: ')
