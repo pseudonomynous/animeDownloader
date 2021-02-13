@@ -90,7 +90,7 @@ def existsInList(link):
 
 #====================================================================================================#
 
-def addToList(link, title, season, loc, subOrDub):	
+def addToList(link, title, season, loc, subOrDub):
 	if not existsInList(link):
 		myAnime.write(title + ', ' + link + ', ' + season + ', ' + subOrDub + '\n')
 		print(myAnime.read())
@@ -148,6 +148,7 @@ def download(link, title, season, loc, subOrDub):
 	#================================================================================================#
 
 	driver.get(link)
+    time.sleep(20)
 	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
 
 	linkArray = []
@@ -219,7 +220,7 @@ shouldQuit = False
 while(not shouldQuit):
 	if(arg1 == ''):
 		shouldUpdate = input('Update your anime [1] \nAdd a new anime [2]\nSearch for anime [3]\nQuit [4]\nInput: ')
-	else:	
+	else:
 		shouldQuit = True
 	if(shouldUpdate == '1' or arg1 == 'update'):
 		updateAnime()
