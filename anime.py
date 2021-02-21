@@ -148,7 +148,7 @@ def download(link, title, season, loc, subOrDub):
 	#================================================================================================#
 
 	driver.get(link)
-    time.sleep(20)
+	time.sleep(20)
 	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
 
 	linkArray = []
