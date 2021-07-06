@@ -202,17 +202,20 @@ def download(link, title, season, loc, subOrDub):
 
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
-				if(elem.get_attribute("href").find('goto.php') != -1):
+				if(elem.get_attribute("href").find('sbplay') != -1):
 					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
 					link = elem.get_attribute("href")
 					print('Download url: ' + link)
 					file = elem
 					break	# default to picking first one
 
-			curlLocation =  subprocess.Popen('curl -sI ' + link + '|grep location|awk \'{print $2}\'', shell=True, stdout=subprocess.PIPE).stdout
-			finalDownloadUrl =  curlLocation.read()
+			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			params = callParams.read().decode().replace("'","").replace("\n","").split(',')
 
-			urllib.request.urlretrieve(finalDownloadUrl.decode(), fileToOpen)
+			url = 'https://sbplay.org/dl?op=download_orig&id=' + params[0] + '&mode=' + params[1] + '&hash=' + params[2]
+			print('Url: ' + url)
+			finalDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			urllib.request.urlretrieve(finalDownloadUrl.read().decode().replace("\n",""), fileToOpen)
 		else:
 			print(fileName + ' was already downloaded.')
 
