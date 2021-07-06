@@ -7,6 +7,8 @@ import time
 import requests
 import urllib.request
 
+import subprocess
+
 try:
     import readline
 except ImportError:
@@ -29,6 +31,7 @@ from pyvirtualdisplay import Display
 import sys
 
 #====================================================================================================#
+downloadLocation = '/home'
 
 display = Display(visible=0, size=(800, 800))
 display.start()
@@ -75,7 +78,7 @@ def isFileDownloaded():
 
 #====================================================================================================#
 
-myAnimeDir = "/home/myAnime.txt"
+myAnimeDir = downloadLocation + "/myAnime.txt"
 myAnime = open(myAnimeDir, "a+")
 print(myAnime.read())
 
@@ -116,7 +119,7 @@ def updateAnime():
 					# print('Comment: #' + array[3].split('#', 1)[1])
 				else:
 					subOrDub = array[3].lstrip().rstrip()
-				loc = '/home'
+				loc = downloadLocation
 				download(link, title, season, loc, subOrDub)
 
 #====================================================================================================#
@@ -189,21 +192,27 @@ def download(link, title, season, loc, subOrDub):
 
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
-				if(elem.get_attribute("href").find('gogo-play') != -1):
-					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.so")
+				if(elem.get_attribute("href").find('streamani') != -1):
+					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.pe")
 					link = elem.get_attribute("href")
 
-			driver.get(link)
+
+			print('Proxy url: ' + 'http://localhost:3000/?url=' + link)
+			driver.get('http://localhost:3000/?url=' + link)
 
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
-				if(elem.get_attribute("href").find('gogo-play') == -1):
+				if(elem.get_attribute("href").find('goto.php') != -1):
 					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
 					link = elem.get_attribute("href")
+					print('Download url: ' + link)
 					file = elem
 					break	# default to picking first one
 
-			urllib.request.urlretrieve(link, fileToOpen)
+			curlLocation =  subprocess.Popen('curl -sI ' + link + '|grep location|awk \'{print $2}\'', shell=True, stdout=subprocess.PIPE).stdout
+			finalDownloadUrl =  curlLocation.read()
+
+			urllib.request.urlretrieve(finalDownloadUrl.decode(), fileToOpen)
 		else:
 			print(fileName + ' was already downloaded.')
 
@@ -225,11 +234,11 @@ while(not shouldQuit):
 	if(shouldUpdate == '1' or arg1 == 'update'):
 		updateAnime()
 	if(shouldUpdate == '2' or arg1 == 'addAnime'):
-		link = input('Enter the gogoanime.so URL of the anime: ')
+		link = input('Enter the gogoanime.pe URL of the anime: ')
 		if(not existsInList(link)):
 			title = input('Enter the title you want: ')
 			season = input('Enter the season of this anime: ')
-			loc = '/home'
+			loc = downloadLocation
 			subOrDub = input('Subbed or Dubbed (s/d): ')
 			download(link, title, season, loc, subOrDub)
 		else:
@@ -237,7 +246,7 @@ while(not shouldQuit):
 	if(shouldUpdate == '3'):
 		search = input('Enter the title of the anime you want to search for on gogoanime: ')
 		words = search.split(' ')
-		searchLink = 'https://gogoanime.so//search.html?keyword='
+		searchLink = 'https://gogoanime.pe//search.html?keyword='
 		for i in range(0, len(words)):
 			searchLink = searchLink + words[i] + '%20'
 		# print(searchLink)
@@ -261,7 +270,7 @@ while(not shouldQuit):
 			if(not existsInList(link)):
 				title = input('Enter the title you want: ')
 				season = input('Enter the season of this anime: ')
-				loc = '/home'
+				loc = downloadLocation
 				subOrDub = input('Subbed or Dubbed (s/d): ')
 				addToList(link, title, season, loc, subOrDub)
 				updateAnime()
@@ -272,5 +281,3 @@ while(not shouldQuit):
 
 driver.quit()
 print("Headless Chrome Instance Ended.")
-
-#====================================================================================================#
