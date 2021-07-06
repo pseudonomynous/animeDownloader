@@ -10,12 +10,12 @@ import urllib.request
 import subprocess
 
 try:
-    import readline
+	import readline
 except ImportError:
-    print("Module readline not available.")
+	print("Module readline not available.")
 else:
-    import rlcompleter
-    readline.parse_and_bind("tab: complete")
+	import rlcompleter
+	readline.parse_and_bind("tab: complete")
 
 from pathlib import Path
 
@@ -60,21 +60,21 @@ download_dir = '/Downloads'
 #====================================================================================================#
 
 def enable_download(driver):
-    driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-    params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
-    driver.execute("send_command", params)
+	driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+	params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+	driver.execute("send_command", params)
 
 def setting_chrome_options():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument('--no-sandbox')
-    return chrome_options;
+	chrome_options = Options()
+	chrome_options.add_argument("--headless")
+	chrome_options.add_argument('--no-sandbox')
+	return chrome_options;
 def isFileDownloaded():
-    file_path = download_dir+"\python_samples-master.zip"
-    while not os.path.exists(file_path):
-        time.sleep(1)
-    if os.path.isfile(file_path):
-        print("File Downloaded successfully..")
+	file_path = download_dir+"\python_samples-master.zip"
+	while not os.path.exists(file_path):
+		time.sleep(1)
+	if os.path.isfile(file_path):
+		print("File Downloaded successfully..")
 
 #====================================================================================================#
 
@@ -214,8 +214,14 @@ def download(link, title, season, loc, subOrDub):
 
 			url = 'https://sbplay.org/dl?op=download_orig&id=' + params[0] + '&mode=' + params[1] + '&hash=' + params[2]
 			print('Url: ' + url)
-			finalDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
-			urllib.request.urlretrieve(finalDownloadUrl.read().decode().replace("\n",""), fileToOpen)
+			directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
+			while (finalDownloadUrl.find('https') == -1): # retry get url
+				print('Retrying...' + url)
+				directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+				finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
+			print('Final Url: ' + finalDownloadUrl)
+			urllib.request.urlretrieve(finalDownloadUrl, fileToOpen)
 		else:
 			print(fileName + ' was already downloaded.')
 
