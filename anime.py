@@ -10,12 +10,12 @@ import urllib.request
 import subprocess
 
 try:
-    import readline
+	import readline
 except ImportError:
-    print("Module readline not available.")
+	print("Module readline not available.")
 else:
-    import rlcompleter
-    readline.parse_and_bind("tab: complete")
+	import rlcompleter
+	readline.parse_and_bind("tab: complete")
 
 from pathlib import Path
 
@@ -60,21 +60,21 @@ download_dir = '/Downloads'
 #====================================================================================================#
 
 def enable_download(driver):
-    driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
-    params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
-    driver.execute("send_command", params)
+	driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
+	params = {'cmd':'Page.setDownloadBehavior', 'params': {'behavior': 'allow', 'downloadPath': download_dir}}
+	driver.execute("send_command", params)
 
 def setting_chrome_options():
-    chrome_options = Options()
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument('--no-sandbox')
-    return chrome_options;
+	chrome_options = Options()
+	chrome_options.add_argument("--headless")
+	chrome_options.add_argument('--no-sandbox')
+	return chrome_options;
 def isFileDownloaded():
-    file_path = download_dir+"\python_samples-master.zip"
-    while not os.path.exists(file_path):
-        time.sleep(1)
-    if os.path.isfile(file_path):
-        print("File Downloaded successfully..")
+	file_path = download_dir+"\python_samples-master.zip"
+	while not os.path.exists(file_path):
+		time.sleep(1)
+	if os.path.isfile(file_path):
+		print("File Downloaded successfully..")
 
 #====================================================================================================#
 
@@ -202,17 +202,33 @@ def download(link, title, season, loc, subOrDub):
 
 			elems = driver.find_elements_by_xpath("//a[@href]")
 			for elem in elems:
-				if(elem.get_attribute("href").find('goto.php') != -1):
+				if(elem.get_attribute("href").find('sbplay') != -1):
 					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
 					link = elem.get_attribute("href")
 					print('Download url: ' + link)
 					file = elem
 					break	# default to picking first one
 
-			curlLocation =  subprocess.Popen('curl -sI ' + link + '|grep location|awk \'{print $2}\'', shell=True, stdout=subprocess.PIPE).stdout
-			finalDownloadUrl =  curlLocation.read()
+			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			params = callParams.read().decode().replace("'","").replace("\n","").split(',')
+			while (len(params[1]) != 1): # retry getting params
+				time.sleep(10)
+				print('Retrying params...' + link )
+				print(params)
+				callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+				params = callParams.read().decode().replace("'","").replace("\n","").split(',')
 
-			urllib.request.urlretrieve(finalDownloadUrl.decode(), fileToOpen)
+			url = 'https://sbplay.org/dl?op=download_orig&id=' + params[0] + '&mode=' + params[1] + '&hash=' + params[2]
+			print('Url: ' + url)
+			directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
+			while (finalDownloadUrl.find('https') == -1): # retry get url
+				time.sleep(10)
+				print('Retrying...' + url)
+				directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+				finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
+			print('Final Url: ' + finalDownloadUrl)
+			urllib.request.urlretrieve(finalDownloadUrl, fileToOpen)
 		else:
 			print(fileName + ' was already downloaded.')
 
