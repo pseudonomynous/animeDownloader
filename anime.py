@@ -212,7 +212,9 @@ def download(link, title, season, loc, subOrDub):
 			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
 			params = callParams.read().decode().replace("'","").replace("\n","").split(',')
 			while (len(params[1]) != 1): # retry getting params
-				print('Retrying...' + link )
+				time.sleep(10)
+				print('Retrying params...' + link )
+				print('params: ' + params)
 				callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
 				params = callParams.read().decode().replace("'","").replace("\n","").split(',')
 
@@ -221,6 +223,7 @@ def download(link, title, season, loc, subOrDub):
 			directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
 			finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
 			while (finalDownloadUrl.find('https') == -1): # retry get url
+				time.sleep(10)
 				print('Retrying...' + url)
 				directDownloadUrl =  subprocess.Popen('curl -s "' + url + '"|grep mp4|perl -p -ne \'s/(.*)(href=")([^\"]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
 				finalDownloadUrl = directDownloadUrl.read().decode().replace("\n","")
