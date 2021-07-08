@@ -209,7 +209,7 @@ def download(link, title, season, loc, subOrDub):
 					file = elem
 					break	# default to picking first one
 
-			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
+			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|head -1|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
 			params = callParams.read().decode().replace("'","").replace("\n","").split(',')
 			while (len(params[1]) != 1): # retry getting params
 				time.sleep(10)
