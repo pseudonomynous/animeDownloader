@@ -24,6 +24,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from webdriver_manager.chrome import ChromeDriverManager
 from pyvirtualdisplay import Display
@@ -43,14 +44,19 @@ options.add_argument("--window-size=1920,1080")
 options.add_argument('--disable-dev-shm-usage')
 options.add_argument("--disable-extensions")
 options.add_argument("--disable-gpu")
+options.add_argument("--enable-javascript")
 options.add_argument("disable-infobars")
 options.add_argument("start-maximized")
+
 options.add_experimental_option("excludeSwitches", ["enable-automation"])
 options.add_experimental_option('useAutomationExtension', False)
+options.add_argument("--disable-browser-side-navigation")
 
 #====================================================================================================#
+capa = DesiredCapabilities.CHROME
+capa["pageLoadStrategy"] = "eager"
 
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+driver = webdriver.Chrome(ChromeDriverManager().install(), options=options, desired_capabilities=capa)
 print ("Headless Chrome Initialized")
 
 params = {'behavior': 'allow', 'downloadPath': r''}
@@ -150,9 +156,14 @@ def download(link, title, season, loc, subOrDub):
 
 	#================================================================================================#
 
+	print('link 1: ' + link)
+	# driver.get('http://localhost:3000/?url=' + link)
 	driver.get(link)
-	time.sleep(20)
-	epList = driver.find_element_by_xpath("//ul[contains(@id, 'episode_related')]")
+	# print('sleeping 30...')
+	# time.sleep(30)
+	# print('done sleeping.')
+
+	epList = driver.find_element(by=By.XPATH, value="//ul[contains(@id, 'episode_related')]")
 
 	linkArray = []
 	epNumArray = []
@@ -188,25 +199,34 @@ def download(link, title, season, loc, subOrDub):
 
 		if(not os.path.exists(fileToOpen)):		# Checks to see if the file is already downloaded.
 			link = linkArray[i]
+			print('link 2: ' + link)
+			# driver.get('http://localhost:3000/?url=' + link)
 			driver.get(link);
+			# print('sleeping 30...')
+			# time.sleep(30)
+			# print('done sleeping.')
 
-			elems = driver.find_elements_by_xpath("//a[@href]")
+			elems = driver.find_elements(by=By.XPATH, value="//a[@href]")
 			for elem in elems:
-				if(elem.get_attribute("href").find('streamani') != -1):
-					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.pe")
-					link = elem.get_attribute("href")
+				print('elem.href: ' + elem.get_attribute("href"))
 
+				if(elem.get_attribute("href").find('gogoplay') != -1 and elem.get_attribute("href").find('download') != -1):
+					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.cm")
+					link = elem.get_attribute("href")
+					break # usually only one link
 
 			print('Proxy url: ' + 'http://localhost:3000/?url=' + link)
 			driver.get('http://localhost:3000/?url=' + link)
 
-			elems = driver.find_elements_by_xpath("//a[@href]")
-			for elem in elems:
-				if(elem.get_attribute("href").find('sbplay') != -1):
+			elems2 = driver.find_elements(by=By.XPATH, value="//a[@href]")
+			for elem2 in elems2:
+				print('elem.href: ' + elem2.get_attribute("href"))
+
+				if(elem2.get_attribute("href").find('sbplay') != -1):
 					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
-					link = elem.get_attribute("href")
+					link = elem2.get_attribute("href")
 					print('Download url: ' + link)
-					file = elem
+					file = elem2
 					break	# default to picking first one
 
 			callParams =  subprocess.Popen('curl -s ' + link + '|grep download_video|head -1|perl -p -ne \'s/(.*)(download_video\()([^\)]*)(.*)/$3/g\'', shell=True, stdout=subprocess.PIPE).stdout
@@ -250,7 +270,7 @@ while(not shouldQuit):
 	if(shouldUpdate == '1' or arg1 == 'update'):
 		updateAnime()
 	if(shouldUpdate == '2' or arg1 == 'addAnime'):
-		link = input('Enter the gogoanime.pe URL of the anime: ')
+		link = input('Enter the gogoanime.cm URL of the anime: ')
 		if(not existsInList(link)):
 			title = input('Enter the title you want: ')
 			season = input('Enter the season of this anime: ')
@@ -262,7 +282,7 @@ while(not shouldQuit):
 	if(shouldUpdate == '3'):
 		search = input('Enter the title of the anime you want to search for on gogoanime: ')
 		words = search.split(' ')
-		searchLink = 'https://gogoanime.pe//search.html?keyword='
+		searchLink = 'https://gogoanime.cm//search.html?keyword='
 		for i in range(0, len(words)):
 			searchLink = searchLink + words[i] + '%20'
 		# print(searchLink)
