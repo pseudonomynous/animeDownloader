@@ -1,6 +1,6 @@
 beautifulsoup4
 requests
-selenium
+selenium==3.141.0
 webdriver-manager
 PyVirtualDisplay
 chromedriver-py
