@@ -157,11 +157,7 @@ def download(link, title, season, loc, subOrDub):
 	#================================================================================================#
 
 	print('link 1: ' + link)
-	# driver.get('http://localhost:3000/?url=' + link)
 	driver.get(link)
-	# print('sleeping 30...')
-	# time.sleep(30)
-	# print('done sleeping.')
 
 	epList = driver.find_element(by=By.XPATH, value="//ul[contains(@id, 'episode_related')]")
 
@@ -200,15 +196,11 @@ def download(link, title, season, loc, subOrDub):
 		if(not os.path.exists(fileToOpen)):		# Checks to see if the file is already downloaded.
 			link = linkArray[i]
 			print('link 2: ' + link)
-			# driver.get('http://localhost:3000/?url=' + link)
 			driver.get(link);
-			# print('sleeping 30...')
-			# time.sleep(30)
-			# print('done sleeping.')
 
 			elems = driver.find_elements(by=By.XPATH, value="//a[@href]")
 			for elem in elems:
-				print('elem.href: ' + elem.get_attribute("href"))
+				# print('elem.href: ' + elem.get_attribute("href"))
 
 				if(elem.get_attribute("href").find('gogoplay') != -1 and elem.get_attribute("href").find('download') != -1):
 					print('Found Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title + " on gogoanime.cm")
@@ -220,7 +212,7 @@ def download(link, title, season, loc, subOrDub):
 
 			elems2 = driver.find_elements(by=By.XPATH, value="//a[@href]")
 			for elem2 in elems2:
-				print('elem.href: ' + elem2.get_attribute("href"))
+				# print('elem.href: ' + elem2.get_attribute("href"))
 
 				if(elem2.get_attribute("href").find('sbplay') != -1):
 					print('Found download link for Season ' + season + " Episode " + str(epNumArray[i]) + " of " + title)
